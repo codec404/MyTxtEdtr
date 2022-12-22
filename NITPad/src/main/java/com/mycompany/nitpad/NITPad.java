@@ -40,8 +40,10 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         cont.add(scrlP);
         
         createMenuItem(jmFile, "New");
+        createMenuItem(jmFile, "New Window");
         createMenuItem(jmFile, "Open");
         createMenuItem(jmFile, "Save");
+        createMenuItem(jmFile, "Save As");
         createMenuItem(jmFile, "Print");
         jmFile.addSeparator();
         createMenuItem(jmFile, "Exit");
@@ -77,6 +79,10 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         {
             jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_DOWN_MASK));
         }
+        else if(getTxt.equals("New Window"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
+        }
         else if(getTxt.equals("Open"))
         {
             jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_DOWN_MASK));
@@ -84,6 +90,10 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         else if(getTxt.equals("Save"))
         {
             jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Save As"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK));
         }
         else if(getTxt.equals("Print"))
         {
@@ -121,6 +131,10 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
             jta.setText("");
             fnameContainer = null;
         }
+        else if(e.getActionCommand().equals("New Window"))
+        {
+            new NITPad();
+        }
         else if(e.getActionCommand().equals("Open"))
         {
             int show = jFc.showDialog(null, "Open");
@@ -135,6 +149,35 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
             }
         }
         else if(e.getActionCommand().equals("Save"))
+        {
+            if(fnameContainer != null)
+            {
+                jFc.setCurrentDirectory(fnameContainer);
+                jFc.setSelectedFile(fnameContainer);
+                try{
+                        File fyl = jFc.getSelectedFile();
+                        SaveFile(fyl.getAbsolutePath());
+                        this.setTitle(fyl.getName()+ " - NITPad");
+                        fnameContainer = fyl;
+                    }
+                    catch(IOException exp2){ }
+            }
+            else
+            {
+                jFc.setSelectedFile(new File("Unsaved.txt"));
+                int show = jFc.showSaveDialog(null);
+                if(show == JFileChooser.APPROVE_OPTION){
+                    try{
+                        File fyl = jFc.getSelectedFile();
+                        SaveFile(fyl.getAbsolutePath());
+                        this.setTitle(fyl.getName()+ " - NITPad");
+                        fnameContainer = fyl;
+                    }
+                    catch(IOException exp2){ }
+                }
+            }
+        }
+        else if(e.getActionCommand().equals("Save As"))
         {
             if(fnameContainer != null)
             {
@@ -217,7 +260,7 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
     public void windowIconified(WindowEvent e){}
     public void windowClosed(WindowEvent e){}
     public void windowClosing(WindowEvent e){
-        getExit();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     public void windowOpened(WindowEvent e){}
     public void getExit(){
