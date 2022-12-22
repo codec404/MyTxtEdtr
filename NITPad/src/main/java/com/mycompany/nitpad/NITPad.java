@@ -5,25 +5,32 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class NITPad extends JFrame implements ActionListener, WindowListener
 {
     JTextArea jta = new JTextArea();
     File fnameContainer;
-    
+    int theme = 1;
     public NITPad(){
         Font fnt = new Font("Arial", Font.PLAIN,15);
         Container cont = getContentPane();
+        setBounds(100,100,800,600);
         JMenuBar jmb = new JMenuBar();
         JMenu jmFile = new JMenu("File");
         JMenu jmEdit = new JMenu("Edit");
+        JMenu jmTheme = new JMenu("Theme");
         JMenu jmHelp = new JMenu("Help");
         
         cont.setLayout(new BorderLayout());
         
         JScrollPane scrlP = new JScrollPane(jta);
-        scrlP.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        add(scrlP);
+        scrlP.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrlP.setBorder(BorderFactory.createEmptyBorder());
         
         scrlP.setVisible(true);
         jta.setFont(fnt);
@@ -35,21 +42,28 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         createMenuItem(jmFile, "New");
         createMenuItem(jmFile, "Open");
         createMenuItem(jmFile, "Save");
+        createMenuItem(jmFile, "Print");
         jmFile.addSeparator();
         createMenuItem(jmFile, "Exit");
         
         createMenuItem(jmEdit , "Cut");
         createMenuItem(jmEdit , "Copy");
         createMenuItem(jmEdit , "Paste");
+        createMenuItem(jmEdit, "Select All");
+        
+        createMenuItem(jmTheme, "Light");
+        createMenuItem(jmTheme, "Dracula Black");
         
         createMenuItem(jmHelp , "About NITPad");
         
         jmb.add(jmFile);
         jmb.add(jmEdit);
+        jmb.add(jmTheme);
         jmb.add(jmHelp);
         
         setJMenuBar(jmb);
-        setIconImage(Toolkit.getDefaultToolkit().getImage("notepad.gif"));
+        String filepath = "D:\\Projects\\NITPad\\NITPad\\src\\main\\java\\com\\mycompany\\nitpad\\icon.png";
+        setIconImage(Toolkit.getDefaultToolkit().getImage(filepath));
         
         addWindowListener(this);
         setSize(600,600);
@@ -59,6 +73,42 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
     
     public void createMenuItem(JMenu jm, String getTxt){
         JMenuItem jmi = new JMenuItem(getTxt);
+        if(getTxt.equals("New"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Open"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Save"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Print"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Exit"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Cut"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Copy"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Paste"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_DOWN_MASK));
+        }
+        else if(getTxt.equals("Select All"))
+        {
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,KeyEvent.CTRL_DOWN_MASK));
+        }
         jmi.addActionListener(this);
         jm.add(jmi);
     }
@@ -111,10 +161,30 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         {
             getExit();
         }
+        else if(e.getActionCommand().equals("Print"))
+        {
+            try {
+                jta.print();
+            } catch (PrinterException ex) {
+                Logger.getLogger(NITPad.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else if(e.getActionCommand().equals("Light"))
+        {
+            jta.setBackground(Color.WHITE);
+            jta.setForeground(Color.BLACK);
+        } 
+        else if(e.getActionCommand().equals("Dracula Black"))
+        {
+            jta.setBackground(Color.BLACK);
+            jta.setForeground(Color.GREEN);
+        } 
         else if(e.getActionCommand().equals("Copy"))
             jta.copy();
         else if(e.getActionCommand().equals("Paste"))
             jta.paste();
+        else if(e.getActionCommand().equals("Select All"))
+            jta.selectAll();
         else if(e.getActionCommand().equals("About NITPad")){
             JOptionPane.showMessageDialog(this,"Created by @codec404 --NITDGP","NITPad",JOptionPane.INFORMATION_MESSAGE);
         }
