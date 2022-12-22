@@ -16,9 +16,11 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
     File fnameContainer;
     int theme = 1;
     public NITPad(){
-        Font fnt = new Font("Arial", Font.PLAIN,15);
+        Font fnt = new Font(Font.MONOSPACED, Font.BOLD,15);
         Container cont = getContentPane();
-        setBounds(100,100,800,600);
+        setBounds(100,10,800,600);
+        jta.setBackground(Color.BLACK);
+        jta.setForeground(Color.GREEN);
         JMenuBar jmb = new JMenuBar();
         JMenu jmFile = new JMenu("File");
         JMenu jmEdit = new JMenu("Edit");
@@ -53,6 +55,7 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         createMenuItem(jmEdit , "Paste");
         createMenuItem(jmEdit, "Select All");
         
+        createMenuItem(jmTheme, "Default");
         createMenuItem(jmTheme, "Light");
         createMenuItem(jmTheme, "Dracula Black");
         
@@ -212,6 +215,11 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
                 Logger.getLogger(NITPad.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        else if(e.getActionCommand().equals("Default"))
+        {
+            jta.setBackground(Color.BLACK);
+            jta.setForeground(Color.GREEN);
+        } 
         else if(e.getActionCommand().equals("Light"))
         {
             jta.setBackground(Color.WHITE);
@@ -219,8 +227,8 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         } 
         else if(e.getActionCommand().equals("Dracula Black"))
         {
-            jta.setBackground(Color.BLACK);
-            jta.setForeground(Color.GREEN);
+            jta.setBackground(new Color(65,68,80));
+            jta.setForeground(Color.WHITE);
         } 
         else if(e.getActionCommand().equals("Copy"))
             jta.copy();
