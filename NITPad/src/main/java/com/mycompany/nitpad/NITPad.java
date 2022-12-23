@@ -8,22 +8,26 @@ import java.awt.event.*;
 import java.awt.print.PrinterException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class NITPad extends JFrame implements ActionListener, WindowListener
 {
     JTextArea jta = new JTextArea();
     File fnameContainer;
-    int theme = 1;
+    Container cont = getContentPane();
+    JPanel statusPanel = new JPanel();
+//    boolean getVal = false;
     public NITPad(){
         Font fnt = new Font(Font.MONOSPACED, Font.BOLD,15);
-        Container cont = getContentPane();
         setBounds(100,10,800,600);
         jta.setBackground(Color.BLACK);
         jta.setForeground(Color.GREEN);
         JMenuBar jmb = new JMenuBar();
         JMenu jmFile = new JMenu("File");
         JMenu jmEdit = new JMenu("Edit");
+        JMenu jmView = new JMenu("View");
+        JMenu jmFonts = new JMenu("Fonts");
         JMenu jmTheme = new JMenu("Theme");
         JMenu jmHelp = new JMenu("Help");
         
@@ -38,6 +42,14 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         jta.setFont(fnt);
         jta.setLineWrap(true);
         jta.setWrapStyleWord(true);
+        
+        statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        cont.add(statusPanel, BorderLayout.SOUTH);
+        statusPanel.setPreferredSize(new Dimension(cont.getWidth(), 25));
+        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+        JLabel statusLabel = new JLabel(" UTF-8  |  Windows-11  |  AMD-Ryzen5");
+        statusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        statusPanel.add(statusLabel);
         
         cont.add(scrlP);
         
@@ -55,6 +67,26 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         createMenuItem(jmEdit , "Paste");
         createMenuItem(jmEdit, "Select All");
         
+        jmView.add(jmFonts);
+        createMenuItem(jmFonts , "Sans-Serif");
+        createMenuItem(jmFonts , "Dialog-Input");
+        createMenuItem(jmFonts , "Monospaced");
+        JCheckBoxMenuItem sb = new JCheckBoxMenuItem("Status Bar");
+        sb.setSelected(true);
+        sb.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if(sb.getState()==false){
+                cont.remove(statusPanel);
+                cont.revalidate();
+                }
+                else{
+                cont.add(statusPanel, BorderLayout.SOUTH);
+                cont.revalidate();
+                }
+            }});
+        jmView.add(sb);
         createMenuItem(jmTheme, "Default");
         createMenuItem(jmTheme, "Light");
         createMenuItem(jmTheme, "Dracula Black");
@@ -63,6 +95,7 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         
         jmb.add(jmFile);
         jmb.add(jmEdit);
+        jmb.add(jmView);
         jmb.add(jmTheme);
         jmb.add(jmHelp);
         
