@@ -11,12 +11,15 @@ import java.util.logging.Logger;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class NITPad extends JFrame implements ActionListener, WindowListener
+public class NITPad extends JFrame implements ActionListener, WindowListener,ItemListener
 {
     JTextArea jta = new JTextArea();
     File fnameContainer;
     Container cont = getContentPane();
     JPanel statusPanel = new JPanel();
+    int get = 15;
+    String getNewFont ="MONOSPACED";
+    String style = "BOLD";
 //    boolean getVal = false;
     public NITPad(){
         Font fnt = new Font(Font.MONOSPACED, Font.BOLD,15);
@@ -68,9 +71,32 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         createMenuItem(jmEdit, "Select All");
         
         jmView.add(jmFonts);
-        createMenuItem(jmFonts , "Sans-Serif");
-        createMenuItem(jmFonts , "Dialog-Input");
-        createMenuItem(jmFonts , "Monospaced");
+        JRadioButtonMenuItem arl = new JRadioButtonMenuItem("Arial");
+        JRadioButtonMenuItem sans = new JRadioButtonMenuItem("Sans_Serif");
+        JRadioButtonMenuItem mono = new JRadioButtonMenuItem("Monospaced");
+        JRadioButtonMenuItem dia = new JRadioButtonMenuItem("Dialog_Input");
+        mono.setSelected(true);
+        
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(arl);
+        bg.add(sans);
+        bg.add(mono);
+        bg.add(dia);
+        
+        arl.addItemListener(this);
+        sans.addItemListener(this);
+        mono.addItemListener(this);
+        dia.addItemListener(this);
+        
+        jmFonts.add(arl);
+        jmFonts.add(sans);
+        jmFonts.add(mono);
+        jmFonts.add(dia);
+        
+        createMenuItem(jmView,"Font Size");
+        
+        jmView.addSeparator();
+        
         JCheckBoxMenuItem sb = new JCheckBoxMenuItem("Status Bar");
         sb.setSelected(true);
         sb.addActionListener(new ActionListener(){
@@ -107,6 +133,35 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         setSize(600,600);
         setTitle("Unsaved.txt - NITPad");
         setVisible(true);
+    }
+    @Override
+    public void itemStateChanged(ItemEvent e)
+    {
+        JRadioButtonMenuItem source = (JRadioButtonMenuItem) e.getSource();
+        if(source.getText()=="Sans_Serif")
+        {
+            getNewFont = source.getText().toUpperCase();
+            Font font = new Font(Font.SERIF,Font.BOLD,get);
+            jta.setFont(font);
+        }
+        else if(source.getText()=="Monospaced")
+        {
+            getNewFont = source.getText().toUpperCase();
+            Font font = new Font(Font.MONOSPACED,Font.BOLD,get);
+            jta.setFont(font);
+        }
+        else if(source.getText()=="Dialog_Input")
+        {
+            getNewFont = source.getText().toUpperCase();
+            Font font = new Font(Font.DIALOG,Font.BOLD,get);
+            jta.setFont(font);
+        }
+        else if(source.getText()== "Arial")
+        {
+            getNewFont = source.getText().toUpperCase();
+            Font font = new Font("ARIAL",Font.PLAIN,get);
+            jta.setFont(font);
+        }
     }
     
     public void createMenuItem(JMenu jm, String getTxt){
@@ -239,6 +294,19 @@ public class NITPad extends JFrame implements ActionListener, WindowListener
         else if(e.getActionCommand().equals("Exit"))
         {
             getExit();
+        }
+        else if(e.getActionCommand().equals("Font Size"))
+        {
+            SpinnerNumberModel sModel = new SpinnerNumberModel(get//initial
+                    , 0, 100, 1);
+            JSpinner spinner = new JSpinner(sModel);
+            int option = JOptionPane.showOptionDialog(null, spinner, "Choose proper font size", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            get = (int)spinner.getValue();
+            if (option == JOptionPane.OK_OPTION)
+            {
+                 Font font = new Font(getNewFont,Font.BOLD,get);
+                 jta.setFont(font);
+            } 
         }
         else if(e.getActionCommand().equals("Print"))
         {
